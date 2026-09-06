@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHAALU KUNJI FRIED CHICKEN | Hot • Crispy • Delicious 🍗</title>
+  <meta name="description" content="Order fresh, hot, and crispy fried chicken, wings, mint chicken, pepper chicken, boneless 65, fried rice, and noodles online from Shaalu Kunji Fried Chicken, Maadha Kottai, Thanjavur. Call 7708807097." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- React 18 & Babel CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            brand: ['Outfit', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brandRed: '#DC2626',
+            brandRedHover: '#B91C1C',
+            brandGold: '#F59E0B',
+            brandOrange: '#EA580C',
+            brandDark: '#111827',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-14px) rotate(1.5deg)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+              '50%': { opacity: '0.9', transform: 'scale(1.05)' },
+            },
+            badgeBounce: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '50%': { transform: 'scale(1.25)' },
+            }
+          },
+          animation: {
+            float: 'float 5s ease-in-out infinite',
+            pulseGlow: 'pulseGlow 3s ease-in-out infinite',
+            badgeBounce: 'badgeBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #DC2626;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #B91C1C;
+    }
+
+    /* Subtle Glassmorphism */
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Custom Text Gradient */
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #DC2626 0%, #EA580C 50%, #D97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-bg-pattern {
+      background-color: #ffffff;
+      background-image: radial-gradient(#fecdd3 0.75px, transparent 0.75px), radial-gradient(#fecdd3 0.75px, #ffffff 0.75px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased selection:bg-red-500 selection:text-white">
+  
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // Initial Menu Data
+    const DEFAULT_MENU = [
+      {
+        id: 'fried-chicken',
+        name: 'Fried Chicken',
+        category: 'Chicken Specialties',
+        price: 100,
+        image: 'assets/images/fried_chicken.jpg',
+        description: 'Crispy, golden-brown drumsticks & thighs marinated in our secret blend of spices.',
+        rating: '4.9 ★ (340+ reviews)',
+        isPopular: true
+      },
+      {
+        id: 'chicken-wings',
+        name: 'Chicken Wings',
+        category: 'Chicken Specialties',
+        price: 80,
+        image: 'assets/images/chicken_wings.jpg',
+        description: 'Juicy, tenders wings coated in savory signature seasoning with dip sauce.',
+        rating: '4.8 ★ (210+ reviews)',
+        isPopular: true
+      },
+      {
+        id: 'mint-chicken',
+        name: 'Mint Chicken',
+        category: 'Flavored Specials',
+        price: 80,
+        image: 'assets/images/mint_chicken.jpg',
+        description: 'Crispy fried chicken tossed in refreshing aromatic mint & green pudina herbs.',
+        rating: '4.9 ★ (180+ reviews)',
+        isPopular: false
+      },
+      {
+        id: 'pepper-chicken',
+        name: 'Pepper Chicken',
+        category: 'Flavored Specials',
+        price: 80,
+        image: 'assets/images/pepper_chicken.jpg',
+        description: 'Spicy South-Indian style black pepper fried chicken sprinkled with crispy curry leaves.',
+        rating: '4.9 ★ (290+ reviews)',
+        isPopular: true
+      },
+      {
+        id: 'boneless-65',
+        name: 'Boneless 65',
+        category: 'Chicken Specialties',
+        price: 100,
+        image: 'assets/images/boneless_65.jpg',
+        description: 'Bite-sized boneless chicken pieces fried to red crispy perfection with green chilies.',
+        rating: '5.0 ★ (410+ reviews)',
+        isPopular: true
+      },
+      {
+        id: 'fried-rice-noodles',
+        name: 'Fried Rice / Noodles',
+        category: 'Mains & Combos',
+        price: 110,
+        image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop',
+        description: 'Hot wok-tossed savory fried rice or egg noodles loaded with fresh veggies & chicken.',
+        rating: '4.7 ★ (195+ reviews)',
+        isPopular: false
+      },
+      {
+        id: 'veg-mayonnaise',
+        name: 'Veg Mayonnaise',
+        category: 'Dips & Extra',
+        price: 20,
+        image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=800&auto=format&fit=crop',
+        description: 'Rich, thick & creamy eggless garlic mayonnaise dip - perfect companion for hot fried chicken.',
+        rating: '4.9 ★ (500+ reviews)',
+        isEditable: true,
+        isPopular: false
+      }
+    ];
+
+    function App() {
+      // Menu Items state (with editable price support)
+      const [menuItems, setMenuItems] = useState(() => {
+        const savedMenu = localStorage.getItem('skfc_menu_items');
+        return savedMenu ? JSON.parse(savedMenu) : DEFAULT_MENU;
+      });
+
+      // Cart State
+      const [cart, setCart] = useState(() => {
+        const savedCart = localStorage.getItem('skfc_cart');
+        return savedCart ? JSON.parse(savedCart) : [];
+      });
+
+      // Quantity selector per item on Menu Card
+      const [quantities, setQuantities] = useState({});
+
+      // UI Controls
+      const [isCartOpen, setIsCartOpen] = useState(false);
+      const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+      const [isPriceAdminOpen, setIsPriceAdminOpen] = useState(false);
+      const [activeCategory, setActiveCategory] = useState('All');
+      const [currentOrder, setCurrentOrder] = useState(null);
+
+      // Save Cart to LocalStorage
+      useEffect(() => {
+        localStorage.setItem('skfc_cart', JSON.stringify(cart));
+      }, [cart]);
+
+      // Save Menu to LocalStorage when updated
+      useEffect(() => {
+        localStorage.setItem('skfc_menu_items', JSON.stringify(menuItems));
+      }, [menuItems]);
+
+      // Re-initialize Lucide Icons after DOM updates
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+
+      // Quantity Handlers for menu cards
+      const handleQuantityChange = (itemId, delta) => {
+        setQuantities(prev => {
+          const current = prev[itemId] || 1;
+          const updated = Math.max(1, current + delta);
+          return { ...prev, [itemId]: updated };
+        });
+      };
+
+      // Add Item to Cart
+      const addToCart = (item) => {
+        const qtyToAdd = quantities[item.id] || 1;
+        setCart(prevCart => {
+          const existingIndex = prevCart.findIndex(cartItem => cartItem.id === item.id);
+          if (existingIndex > -1) {
+            const updated = [...prevCart];
+            updated[existingIndex].quantity += qtyToAdd;
+            return updated;
+          } else {
+            return [...prevCart, { ...item, quantity: qtyToAdd }];
+          }
+        });
+
+        // Reset local qty selector for this card
+        setQuantities(prev => ({ ...prev, [item.id]: 1 }));
+        
+        // Show notification toast or open drawer
+        setIsCartOpen(true);
+      };
+
+      // Cart Quantity Adjustments
+      const updateCartQuantity = (itemId, newQty) => {
+        if (newQty <= 0) {
+          removeFromCart(itemId);
+          return;
+        }
+        setCart(prev => prev.map(item => item.id === itemId ? { ...item, quantity: newQty } : item));
+      };
+
+      const removeFromCart = (itemId) => {
+        setCart(prev => prev.filter(item => item.id !== itemId));
+      };
+
+      const clearCart = () => {
+        setCart([]);
+      };
+
+      // Calculate Totals
+      const cartCount = useMemo(() => cart.reduce((total, item) => total + item.quantity, 0), [cart]);
+      const subtotal = useMemo(() => cart.reduce((total, item) => total + (item.price * item.quantity), 0), [cart]);
+      const deliveryFee = subtotal > 0 ? (subtotal >= 400 ? 0 : 30) : 0;
+      const grandTotal = subtotal + deliveryFee;
+
+      // Handle Price Update from Admin Modal
+      const handlePriceUpdate = (itemId, newPrice) => {
+        setMenuItems(prev => prev.map(item => item.id === itemId ? { ...item, price: Number(newPrice) } : item));
+        
+        // Also update items in current cart if present
+        setCart(prevCart => prevCart.map(cartItem => cartItem.id === itemId ? { ...cartItem, price: Number(newPrice) } : cartItem));
+      };
+
+      // Submit Order
+      const handlePlaceOrder = (orderDetails) => {
+        const orderId = 'SKFC-' + Math.floor(100000 + Math.random() * 900000);
+        const orderData = {
+          orderId,
+          date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+          items: [...cart],
+          subtotal,
+          deliveryFee,
+          grandTotal,
+          customer: orderDetails.customer,
+          paymentMethod: orderDetails.paymentMethod,
+          paymentStatus: orderDetails.paymentMethod === 'cod' ? 'Pending (COD)' : 'Paid Online',
+          status: 'Preparing'
+        };
+
+        setCurrentOrder(orderData);
+        clearCart();
+        setIsCheckoutOpen(false);
+        setIsCartOpen(false);
+      };
+
+      // Categories
+      const categories = ['All', 'Chicken Specialties', 'Flavored Specials', 'Mains & Combos', 'Dips & Extra'];
+      const filteredMenu = activeCategory === 'All' 
+        ? menuItems 
+        : menuItems.filter(item => item.category === activeCategory);
+
+      return (
+        <div className="min-h-screen flex flex-col bg-white">
+          {/* HEADER / NAVIGATION BAR */}
+          <header className="sticky top-0 z-40 glass-nav border-b border-gray-100 shadow-sm transition-all duration-300">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+              
+              {/* Brand Logo & Name */}
+              <a href="#" className="flex items-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 via-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-red-500/20 group-hover:scale-105 transition-transform">
+                  <span className="text-2xl">🍗</span>
+                </div>
+                <div>
+                  <h1 className="font-brand font-black text-lg sm:text-xl md:text-2xl tracking-tight text-gray-900 uppercase leading-none">
+                    SHAALU KUNJI <span className="text-red-600">FRIED CHICKEN</span>
+                  </h1>
+                  <p className="text-xs font-semibold text-amber-600 flex items-center gap-1 mt-0.5">
+                    <i data-lucide="map-pin" className="w-3 h-3 text-red-500"></i> Maadha Kottai, Thanjavur
+                  </p>
+                </div>
+              </a>
+
+              {/* Desktop Nav Links */}
+              <nav className="hidden md:flex items-center gap-8 font-medium text-gray-700">
+                <a href="#home" className="hover:text-red-600 transition-colors">Home</a>
+                <a href="#menu" className="hover:text-red-600 transition-colors flex items-center gap-1">
+                  Menu <span className="px-2 py-0.5 text-[10px] bg-red-100 text-red-600 font-bold rounded-full">Hot</span>
+                </a>
+                <a href="#contact" className="hover:text-red-600 transition-colors">Contact</a>
+                <button 
+                  onClick={() => setIsPriceAdminOpen(true)}
+                  className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-semibold transition-colors"
+                  title="Admin Price Manager"
+                >
+                  <i data-lucide="settings" className="w-3.5 h-3.5 text-gray-600"></i> Admin Price Edit
+                </button>
+              </nav>
+
+              {/* Actions Right */}
+              <div className="flex items-center gap-3 sm:gap-4">
+                {/* Call Button */}
+                <a 
+                  href="tel:7708807097" 
+                  className="hidden sm:flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 px-3.5 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105"
+                >
+                  <i data-lucide="phone-call" className="w-4 h-4 text-amber-600"></i>
+                  <span>7708807097</span>
+                </a>
+
+                {/* Cart Button */}
+                <button
+                  onClick={() => setIsCartOpen(true)}
+                  className="relative bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-red-500/30 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+                  aria-label="View Shopping Cart"
+                >
+                  <i data-lucide="shopping-bag" className="w-5 h-5"></i>
+                  <span className="hidden sm:inline">Cart</span>
+                  {cartCount > 0 && (
+                    <span className="bg-amber-400 text-gray-900 font-extrabold text-xs px-2 py-0.5 rounded-full animate-badgeBounce shadow-sm">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+            </div>
+          </header>
+
+          {/* MAIN CONTENT AREA */}
+          <main className="flex-grow">
+            
+            {/* HERO SECTION */}
+            <section id="home" className="relative overflow-hidden hero-bg-pattern py-12 md:py-20 lg:py-24 border-b border-gray-100">
+              {/* Background Ambient Glows */}
+              <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-400/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute bottom-10 right-10 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                  
+                  {/* Left Hero Content */}
+                  <div className="lg:col-span-7 text-center lg:text-left">
+                    
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200/70 text-red-700 px-4 py-1.5 rounded-full text-sm font-bold mb-6 shadow-sm">
+                      <span className="flex h-2 w-2 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                      <span>Now Serving Hot & Fresh in Thanjavur</span>
+                    </div>
+
+                    {/* Main Shop Name - ULTRA BOLD */}
+                    <h1 className="font-brand font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-gray-900 tracking-tight leading-[1.08] mb-6 uppercase">
+                      SHAALU KUNJI <br className="hidden sm:inline" />
+                      <span className="text-gradient-gold drop-shadow-sm">FRIED CHICKEN</span>
+                    </h1>
+
+                    {/* Tagline */}
+                    <p className="text-xl sm:text-2xl font-extrabold text-amber-600 mb-4 tracking-wide flex items-center justify-center lg:justify-start gap-2">
+                      <span>Hot</span> • <span>Crispy</span> • <span>Delicious</span> <span className="text-3xl">🍗</span>
+                    </p>
+
+                    {/* Location Info */}
+                    <p className="text-base sm:text-lg text-gray-600 font-medium mb-8 max-w-xl mx-auto lg:mx-0 flex items-center justify-center lg:justify-start gap-2">
+                      <i data-lucide="map-pin" className="w-5 h-5 text-red-600 shrink-0"></i>
+                      <span>Maadha Kottai, Thanjavur</span>
+                    </p>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                      <a 
+                        href="#menu" 
+                        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl shadow-red-600/30 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95"
+                      >
+                        <i data-lucide="utensils-crossed" className="w-5 h-5"></i>
+                        <span>VIEW MENU</span>
+                      </a>
+                      
+                      <button 
+                        onClick={() => {
+                          const menuSection = document.getElementById('menu');
+                          if(menuSection) menuSection.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-lg px-8 py-4 rounded-2xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95"
+                      >
+                        <i data-lucide="zap" className="w-5 h-5 text-gray-950"></i>
+                        <span>ORDER NOW</span>
+                      </button>
+                    </div>
+
+                    {/* Trust Highlights */}
+                    <div className="mt-10 pt-8 border-t border-gray-100 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0 text-center lg:text-left">
+                      <div>
+                        <p className="font-brand font-black text-2xl text-gray-900">100%</p>
+                        <p className="text-xs text-gray-500 font-semibold">Fresh Chicken</p>
+                      </div>
+                      <div>
+                        <p className="font-brand font-black text-2xl text-gray-900">₹80+</p>
+                        <p className="text-xs text-gray-500 font-semibold">Affordable Combos</p>
+                      </div>
+                      <div>
+                        <p className="font-brand font-black text-2xl text-gray-900">⚡ 30 Min</p>
+                        <p className="text-xs text-gray-500 font-semibold">Fast Delivery</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Right Hero Graphic - Animated Floating Fried Chicken Image */}
+                  <div className="lg:col-span-5 flex justify-center relative">
+                    {/* Glowing Backdrop Circle */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-red-500/20 via-amber-400/30 to-orange-500/20 rounded-full blur-2xl transform scale-90 animate-pulseGlow"></div>
+                    
+                    {/* Floating Container */}
+                    <div className="relative z-10 w-full max-w-md animate-float">
+                      <div className="bg-white p-3 rounded-3xl shadow-2xl border-4 border-amber-400/40 relative group">
+                        
+                        {/* High Res Hero Image */}
+                        <img 
+                          src="assets/images/hero_fried_chicken.jpg" 
+                          alt="Shaalu Kunji Fried Chicken Bucket" 
+                          className="w-full h-80 sm:h-96 object-cover rounded-2xl shadow-md transform transition-transform duration-700 group-hover:scale-105"
+                        />
+
+                        {/* Floating Hot Badge */}
+                        <div className="absolute -top-4 -right-4 bg-red-600 text-white px-4 py-2 rounded-2xl shadow-lg font-black text-sm tracking-wide transform rotate-6 border-2 border-white flex items-center gap-1.5">
+                          <span className="text-base">🔥</span> HOT & CRISPY
+                        </div>
+
+                        {/* Floating Rating Card */}
+                        <div className="absolute -bottom-5 -left-4 glass-card p-3 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">
+                            ★
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-sm text-gray-900">4.9 / 5.0 Rating</p>
+                            <p className="text-xs text-gray-500 font-medium">Loved in Thanjavur</p>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+
+            {/* MENU SECTION */}
+            <section id="menu" className="py-16 md:py-24 bg-gray-50/50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                {/* Menu Header */}
+                <div className="text-center max-w-3xl mx-auto mb-12">
+                  <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                    Freshly Prepared Everyday
+                  </div>
+                  <h2 className="font-brand font-black text-3xl sm:text-4xl md:text-5xl text-gray-900 tracking-tight uppercase">
+                    🍗 OUR DELICIOUS MENU
+                  </h2>
+                  <p className="text-gray-600 text-base sm:text-lg mt-3 font-medium">
+                    Hand-crafted fried chicken, signature wings, spicy starters, and mouthwatering sides.
+                  </p>
+                </div>
+
+                {/* Category Pills Filter */}
+                <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 mb-10">
+                  {categories.map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+                        activeCategory === cat
+                          ? 'bg-red-600 text-white shadow-lg shadow-red-600/30 scale-105'
+                          : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200/80'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Food Item Cards Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {filteredMenu.map(item => {
+                    const currentQty = quantities[item.id] || 1;
+
+                    return (
+                      <div 
+                        key={item.id}
+                        className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-1.5"
+                      >
+                        {/* Card Image Container */}
+                        <div className="relative h-56 overflow-hidden bg-gray-100">
+                          <img 
+                            src={item.image} 
+                            alt={item.name} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                          
+                          {/* Badge if Popular */}
+                          {item.isPopular && (
+                            <span className="absolute top-4 left-4 bg-amber-500 text-gray-950 font-black text-xs px-3 py-1 rounded-full shadow-md">
+                              Bestseller 🔥
+                            </span>
+                          )}
+
+                          {/* Editable Price Tag indicator */}
+                          {item.isEditable && (
+                            <button 
+                              onClick={() => setIsPriceAdminOpen(true)}
+                              className="absolute top-4 right-4 bg-black/70 hover:bg-black text-white text-xs px-2.5 py-1 rounded-lg backdrop-blur-sm transition-colors flex items-center gap-1"
+                              title="Edit Price"
+                            >
+                              <i data-lucide="edit-3" className="w-3 h-3 text-amber-400"></i> Edit Price
+                            </button>
+                          )}
+
+                          {/* Category Tag */}
+                          <span className="absolute bottom-3 left-4 bg-white/90 backdrop-blur-md text-gray-800 text-xs font-bold px-3 py-1 rounded-lg shadow-sm">
+                            {item.category}
+                          </span>
+                        </div>
+
+                        {/* Card Details Body */}
+                        <div className="p-6 flex flex-col flex-grow">
+                          
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h3 className="font-brand font-extrabold text-xl text-gray-900 group-hover:text-red-600 transition-colors">
+                              {item.name}
+                            </h3>
+                            {/* Price */}
+                            <span className="font-brand font-black text-2xl text-red-600 whitespace-nowrap">
+                              ₹{item.price}
+                            </span>
+                          </div>
+
+                          <p className="text-gray-500 text-sm font-normal mb-4 line-clamp-2 leading-relaxed flex-grow">
+                            {item.description}
+                          </p>
+
+                          <div className="text-xs font-bold text-amber-700 mb-6 flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-md w-fit">
+                            <span>{item.rating}</span>
+                          </div>
+
+                          {/* Quantity & Add to Cart Controls */}
+                          <div className="pt-4 border-t border-gray-100 flex items-center gap-3">
+                            
+                            {/* Quantity Adjuster */}
+                            <div className="flex items-center bg-gray-100 rounded-xl p-1 border border-gray-200">
+                              <button 
+                                onClick={() => handleQuantityChange(item.id, -1)}
+                                className="w-8 h-8 rounded-lg bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 font-bold flex items-center justify-center transition-colors shadow-sm"
+                                aria-label="Decrease quantity"
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center font-extrabold text-sm text-gray-900">
+                                {currentQty}
+                              </span>
+                              <button 
+                                onClick={() => handleQuantityChange(item.id, 1)}
+                                className="w-8 h-8 rounded-lg bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 font-bold flex items-center justify-center transition-colors shadow-sm"
+                                aria-label="Increase quantity"
+                              >
+                                +
+                              </button>
+                            </div>
+
+                            {/* Add to Cart Button */}
+                            <button
+                              onClick={() => addToCart(item)}
+                              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm py-2.5 px-4 rounded-xl shadow-lg shadow-red-600/25 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+                            >
+                              <i data-lucide="shopping-cart" className="w-4 h-4"></i>
+                              <span>ADD TO CART</span>
+                            </button>
+
+                          </div>
+
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+              </div>
+            </section>
+
+            {/* ORDER CONFIRMATION / TRACKER VIEW (If Order Exists) */}
+            {currentOrder && (
+              <section className="py-12 bg-amber-50 border-y border-amber-200">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                  
+                  <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+                    🎉
+                  </div>
+
+                  <h2 className="font-brand font-black text-3xl sm:text-4xl text-gray-900 uppercase">
+                    ORDER PLACED SUCCESSFULLY!
+                  </h2>
+
+                  <p className="text-gray-700 text-base font-semibold mt-2">
+                    Thank you for ordering from <span className="font-black text-red-600">SHAALU KUNJI FRIED CHICKEN 🍗</span>
+                  </p>
+
+                  <div className="mt-8 bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-amber-100 text-left">
+                    <div className="flex flex-wrap items-center justify-between pb-6 border-b border-gray-100 gap-4">
+                      <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase">Order Reference</p>
+                        <p className="font-brand font-black text-xl text-red-600">{currentOrder.orderId}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase">Payment Method</p>
+                        <p className="font-extrabold text-sm text-gray-800 uppercase">{currentOrder.paymentMethod}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-400 uppercase">Total Amount</p>
+                        <p className="font-brand font-black text-2xl text-gray-900">₹{currentOrder.grandTotal}</p>
+                      </div>
+                    </div>
+
+                    {/* Step-by-Step Live Order Tracker */}
+                    <div className="my-8">
+                      <p className="text-xs font-black text-gray-500 uppercase mb-4 tracking-wider">Live Order Status</p>
+                      <div className="grid grid-cols-4 gap-2 text-center relative">
+                        <div className="flex flex-col items-center">
+                          <div className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold mb-2 shadow-md">✓</div>
+                          <span className="text-xs font-extrabold text-gray-900">Order Received</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center font-bold mb-2 shadow-md animate-pulse">🍗</div>
+                          <span className="text-xs font-extrabold text-red-600">Preparing</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">🛵</div>
+                          <span className="text-xs font-bold text-gray-400">On the Way</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">😋</div>
+                          <span className="text-xs font-bold text-gray-400">Delivered</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Customer & Address Details */}
+                    <div className="bg-gray-50 p-4 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="font-bold text-gray-900">{currentOrder.customer.fullName}</p>
+                        <p className="text-gray-600">📞 {currentOrder.customer.mobile}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-700 font-medium">
+                          {currentOrder.customer.doorNo}, {currentOrder.customer.street}, {currentOrder.customer.area}, {currentOrder.customer.city} - {currentOrder.customer.pincode}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Items Ordered List */}
+                    <div className="mt-6">
+                      <p className="text-xs font-bold text-gray-400 uppercase mb-3">Ordered Items</p>
+                      <div className="space-y-2">
+                        {currentOrder.items.map(i => (
+                          <div key={i.id} className="flex items-center justify-between text-sm py-1 border-b border-gray-50">
+                            <span className="font-medium text-gray-800">{i.quantity}x {i.name}</span>
+                            <span className="font-bold text-gray-900">₹{i.price * i.quantity}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentOrder(null)}
+                    className="mt-8 bg-red-600 hover:bg-red-700 text-white font-black text-lg px-8 py-3.5 rounded-2xl shadow-lg transition-all hover:scale-105"
+                  >
+                    CONTINUE ORDERING
+                  </button>
+
+                </div>
+              </section>
+            )}
+
+            {/* CONTACT & LOCATION SECTION */}
+            <section id="contact" className="py-16 md:py-24 bg-white">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div className="text-center max-w-2xl mx-auto mb-12">
+                  <h2 className="font-brand font-black text-3xl sm:text-4xl text-gray-900 uppercase">
+                    📍 VISIT OR CONTACT US
+                  </h2>
+                  <p className="text-gray-600 font-medium mt-2">
+                    Have questions or want to place a bulk party order? Reach out to us directly!
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  
+                  {/* Location Card */}
+                  <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 text-center flex flex-col items-center hover:shadow-lg transition-shadow">
+                    <div className="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-2xl mb-4">
+                      📍
+                    </div>
+                    <h3 className="font-brand font-bold text-xl text-gray-900 mb-2">Visit Us</h3>
+                    <p className="font-black text-gray-900 text-lg mb-1">Shaalu Kunji Fried Chicken</p>
+                    <p className="text-gray-600 font-medium text-sm">Maadha Kottai, Thanjavur</p>
+                  </div>
+
+                  {/* Phone Call Card */}
+                  <div className="bg-amber-50/60 p-8 rounded-3xl border border-amber-200/60 text-center flex flex-col items-center hover:shadow-lg transition-shadow">
+                    <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl mb-4">
+                      📞
+                    </div>
+                    <h3 className="font-brand font-bold text-xl text-gray-900 mb-2">Call Us</h3>
+                    <p className="font-black text-gray-900 text-2xl mb-4">7708807097</p>
+                    <a 
+                      href="tel:7708807097"
+                      className="bg-amber-500 hover:bg-amber-600 text-gray-950 font-black px-6 py-3 rounded-xl shadow-md transition-all hover:scale-105 flex items-center gap-2"
+                    >
+                      <i data-lucide="phone-call" className="w-4 h-4"></i>
+                      <span>CALL NOW</span>
+                    </a>
+                  </div>
+
+                  {/* Instagram Card */}
+                  <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-3xl border border-pink-100 text-center flex flex-col items-center hover:shadow-lg transition-shadow">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center text-2xl mb-4 shadow-md">
+                      📸
+                    </div>
+                    <h3 className="font-brand font-bold text-xl text-gray-900 mb-2">Instagram</h3>
+                    <p className="font-black text-purple-900 text-xl mb-4">@itz_vishal__</p>
+                    <a 
+                      href="https://instagram.com/itz_vishal__" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-black px-6 py-3 rounded-xl shadow-md transition-all hover:scale-105 flex items-center gap-2"
+                    >
+                      <i data-lucide="instagram" className="w-4 h-4"></i>
+                      <span>FOLLOW ON INSTAGRAM</span>
+                    </a>
+                  </div>
+
+                </div>
+
+              </div>
+            </section>
+
+          </main>
+
+          {/* SHOPPING CART DRAWER PANEL */}
+          {isCartOpen && (
+            <div className="fixed inset-0 z-50 overflow-hidden">
+              {/* Overlay Backdrop */}
+              <div 
+                onClick={() => setIsCartOpen(false)}
+                className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
+              ></div>
+
+              <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+                <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                  
+                  {/* Cart Header */}
+                  <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+                    <div className="flex items-center gap-2">
+                      <i data-lucide="shopping-bag" className="w-6 h-6 text-red-600"></i>
+                      <h2 className="font-brand font-black text-xl text-gray-900 uppercase">
+                        YOUR SHOPPING CART ({cartCount})
+                      </h2>
+                    </div>
+                    <button 
+                      onClick={() => setIsCartOpen(false)}
+                      className="w-9 h-9 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 flex items-center justify-center font-bold transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Cart Item List */}
+                  <div className="flex-1 overflow-y-auto p-6 divide-y divide-gray-100">
+                    {cart.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-center py-12">
+                        <span className="text-6xl mb-4">🍗</span>
+                        <p className="font-brand font-bold text-xl text-gray-900 mb-2">Your Cart is Empty!</p>
+                        <p className="text-gray-500 text-sm max-w-xs mb-6">Add delicious fried chicken & snacks from the menu to start your order.</p>
+                        <button
+                          onClick={() => setIsCartOpen(false)}
+                          className="bg-red-600 text-white font-bold px-6 py-2.5 rounded-xl shadow-md"
+                        >
+                          Browse Menu
+                        </button>
+                      </div>
+                    ) : (
+                      cart.map(item => (
+                        <div key={item.id} className="py-4 flex items-center gap-4">
+                          <img 
+                            src={item.image} 
+                            alt={item.name} 
+                            className="w-16 h-16 object-cover rounded-xl border border-gray-100 shrink-0" 
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-bold text-gray-900 text-base leading-tight">{item.name}</h4>
+                            <p className="text-red-600 font-extrabold text-sm mt-0.5">₹{item.price}</p>
+                            
+                            {/* Quantity Controls */}
+                            <div className="flex items-center gap-2 mt-2">
+                              <button 
+                                onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                                className="w-6 h-6 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center text-xs"
+                              >
+                                -
+                              </button>
+                              <span className="font-extrabold text-sm px-2 text-gray-900">{item.quantity}</span>
+                              <button 
+                                onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
+                                className="w-6 h-6 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center text-xs"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
+                            <p className="font-brand font-black text-lg text-gray-900">₹{item.price * item.quantity}</p>
+                            <button 
+                              onClick={() => removeFromCart(item.id)}
+                              className="text-xs text-red-500 hover:text-red-700 font-semibold mt-2"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Cart Footer / Checkout CTA */}
+                  {cart.length > 0 && (
+                    <div className="p-6 border-t border-gray-100 bg-gray-50/80 space-y-4">
+                      <div className="space-y-1.5 text-sm">
+                        <div className="flex justify-between text-gray-600">
+                          <span>Subtotal</span>
+                          <span className="font-bold text-gray-900">₹{subtotal}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-600">
+                          <span>Delivery Fee (Thanjavur)</span>
+                          <span className="font-bold text-gray-900">
+                            {deliveryFee === 0 ? <span className="text-green-600">FREE</span> : `₹${deliveryFee}`}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-lg font-black text-gray-900 pt-2 border-t border-gray-200">
+                          <span>Total Amount</span>
+                          <span className="text-red-600">₹{grandTotal}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setIsCartOpen(false);
+                          setIsCheckoutOpen(true);
+                        }}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-black text-lg py-3.5 rounded-2xl shadow-xl shadow-red-600/30 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                      >
+                        <span>PROCEED TO BUY</span>
+                        <i data-lucide="arrow-right" className="w-5 h-5"></i>
+                      </button>
+                    </div>
+                  )}
+
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* CHECKOUT MODAL */}
+          {isCheckoutOpen && (
+            <CheckoutModal 
+              cart={cart}
+              grandTotal={grandTotal}
+              subtotal={subtotal}
+              deliveryFee={deliveryFee}
+              onClose={() => setIsCheckoutOpen(false)}
+              onSubmitOrder={handlePlaceOrder}
+            />
+          )}
+
+          {/* PRICE ADMIN MODAL */}
+          {isPriceAdminOpen && (
+            <PriceAdminModal 
+              menuItems={menuItems}
+              onClose={() => setIsPriceAdminOpen(false)}
+              onUpdatePrice={handlePriceUpdate}
+            />
+          )}
+
+          {/* FOOTER */}
+          <footer className="bg-gray-900 text-white py-12 border-t border-gray-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 pb-8 border-b border-gray-800">
+                
+                {/* Col 1 */}
+                <div className="md:col-span-2">
+                  <h3 className="font-brand font-black text-2xl uppercase tracking-tight text-white mb-2">
+                    SHAALU KUNJI <span className="text-red-500">FRIED CHICKEN 🍗</span>
+                  </h3>
+                  <p className="text-gray-400 text-sm max-w-sm mb-4">
+                    Serving hot, crispy, and delicious fried chicken, wings, boneless 65, pepper chicken, mint chicken, and noodles in Thanjavur.
+                  </p>
+                  <p className="text-amber-400 text-xs font-bold">
+                    📍 Maadha Kottai, Thanjavur, Tamil Nadu
+                  </p>
+                </div>
+
+                {/* Col 2 */}
+                <div>
+                  <h4 className="font-bold text-sm text-gray-200 uppercase tracking-wider mb-3">Quick Links</h4>
+                  <ul className="space-y-2 text-sm text-gray-400">
+                    <li><a href="#home" className="hover:text-white">Home</a></li>
+                    <li><a href="#menu" className="hover:text-white">Our Menu</a></li>
+                    <li><a href="#contact" className="hover:text-white">Contact Us</a></li>
+                    <li>
+                      <button onClick={() => setIsPriceAdminOpen(true)} className="hover:text-amber-400 text-left">
+                        Admin Configuration
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Col 3 */}
+                <div>
+                  <h4 className="font-bold text-sm text-gray-200 uppercase tracking-wider mb-3">Direct Contact</h4>
+                  <p className="text-sm text-gray-300 font-semibold mb-2">📞 7708807097</p>
+                  <p className="text-sm text-gray-300 font-semibold mb-4">📸 Instagram: @itz_vishal__</p>
+                  <a 
+                    href="tel:7708807097" 
+                    className="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2 rounded-lg"
+                  >
+                    Call Store
+                  </a>
+                </div>
+
+              </div>
+
+              <div className="text-center text-xs text-gray-500">
+                © 2026 Shaalu Kunji Fried Chicken. All Rights Reserved. Designed with passion for Thanjavur foodies.
+              </div>
+            </div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    // CHECKOUT FORM & PAYMENT COMPONENT
+    function CheckoutModal({ cart, grandTotal, subtotal, deliveryFee, onClose, onSubmitOrder }) {
+      const [formData, setFormData] = useState({
+        fullName: '',
+        mobile: '',
+        doorNo: '',
+        street: '',
+        area: '',
+        city: 'Thanjavur',
+        district: 'Thanjavur',
+        pincode: '613005',
+        notes: ''
+      });
+
+      const [paymentMethod, setPaymentMethod] = useState('cod'); // cod, upi, card
+      const [cardData, setCardData] = useState({ number: '', name: '', expiry: '', cvv: '' });
+      const [upiRef, setUpiRef] = useState('');
+      const [isProcessing, setIsProcessing] = useState(false);
+
+      const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        if (!formData.fullName || !formData.mobile || !formData.doorNo || !formData.street) {
+          alert('Please fill out all required delivery details.');
+          return;
+        }
+
+        setIsProcessing(true);
+        setTimeout(() => {
+          setIsProcessing(false);
+          onSubmitOrder({
+            customer: formData,
+            paymentMethod
+          });
+        }, 1200);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-8">
+            
+            {/* Modal Header */}
+            <div className="bg-gray-900 text-white p-6 flex items-center justify-between">
+              <div>
+                <h3 className="font-brand font-black text-xl uppercase">CHECKOUT & DELIVERY DETAILS</h3>
+                <p className="text-xs text-amber-400 font-medium">SHAALU KUNJI FRIED CHICKEN • THANJAVUR</p>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
+              
+              {/* Section 1: Customer Details */}
+              <div>
+                <h4 className="font-brand font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                  <i data-lucide="user" className="w-5 h-5 text-red-600"></i>
+                  <span>1. Customer Details</span>
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name *</label>
+                    <input 
+                      type="text"
+                      name="fullName"
+                      required
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      placeholder="e.g. Vishal Kumar"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Mobile Number *</label>
+                    <input 
+                      type="tel"
+                      name="mobile"
+                      required
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      placeholder="e.g. 7708807097"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Delivery Address */}
+              <div>
+                <h4 className="font-brand font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                  <i data-lucide="map-pin" className="w-5 h-5 text-red-600"></i>
+                  <span>2. Delivery Address</span>
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Door / House No *</label>
+                    <input 
+                      type="text"
+                      name="doorNo"
+                      required
+                      value={formData.doorNo}
+                      onChange={handleChange}
+                      placeholder="e.g. 12/A"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Street Name *</label>
+                    <input 
+                      type="text"
+                      name="street"
+                      required
+                      value={formData.street}
+                      onChange={handleChange}
+                      placeholder="e.g. Temple Street, Maadha Kottai"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Area</label>
+                    <input 
+                      type="text"
+                      name="area"
+                      value={formData.area}
+                      onChange={handleChange}
+                      placeholder="Maadha Kottai"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">City / District</label>
+                    <input 
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-gray-50 text-sm font-semibold"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pincode</label>
+                    <input 
+                      type="text"
+                      name="pincode"
+                      value={formData.pincode}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Special Delivery Instructions (Optional)</label>
+                  <input 
+                    type="text"
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleChange}
+                    placeholder="e.g. Extra spicy, call upon arrival"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:outline-none text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Section 3: Select Payment Method */}
+              <div>
+                <h4 className="font-brand font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                  <i data-lucide="credit-card" className="w-5 h-5 text-red-600"></i>
+                  <span>3. Select Payment Method</span>
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                  {/* COD */}
+                  <label className={`p-4 rounded-2xl border-2 cursor-pointer flex flex-col items-center text-center transition-all ${
+                    paymentMethod === 'cod' ? 'border-red-600 bg-red-50/50 text-red-900' : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="cod" 
+                      checked={paymentMethod === 'cod'} 
+                      onChange={() => setPaymentMethod('cod')} 
+                      className="sr-only"
+                    />
+                    <span className="text-2xl mb-1">💵</span>
+                    <span className="font-extrabold text-sm">Cash on Delivery</span>
+                    <span className="text-[10px] text-gray-500 mt-1">Pay when food arrives</span>
+                  </label>
+
+                  {/* UPI */}
+                  <label className={`p-4 rounded-2xl border-2 cursor-pointer flex flex-col items-center text-center transition-all ${
+                    paymentMethod === 'upi' ? 'border-red-600 bg-red-50/50 text-red-900' : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="upi" 
+                      checked={paymentMethod === 'upi'} 
+                      onChange={() => setPaymentMethod('upi')} 
+                      className="sr-only"
+                    />
+                    <span className="text-2xl mb-1">📱</span>
+                    <span className="font-extrabold text-sm">UPI Payment</span>
+                    <span className="text-[10px] text-gray-500 mt-1">GPay / PhonePe / Paytm</span>
+                  </label>
+
+                  {/* Card */}
+                  <label className={`p-4 rounded-2xl border-2 cursor-pointer flex flex-col items-center text-center transition-all ${
+                    paymentMethod === 'card' ? 'border-red-600 bg-red-50/50 text-red-900' : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="card" 
+                      checked={paymentMethod === 'card'} 
+                      onChange={() => setPaymentMethod('card')} 
+                      className="sr-only"
+                    />
+                    <span className="text-2xl mb-1">💳</span>
+                    <span className="font-extrabold text-sm">Credit / Debit Card</span>
+                    <span className="text-[10px] text-gray-500 mt-1">Visa, Mastercard, RuPay</span>
+                  </label>
+                </div>
+
+                {/* UPI QR & Details Sub-box */}
+                {paymentMethod === 'upi' && (
+                  <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-center space-y-3">
+                    <p className="text-xs font-bold text-amber-900">Scan QR Code or pay to UPI ID: <span className="font-mono text-sm text-red-600">7708807097@upi</span></p>
+                    <div className="w-32 h-32 bg-white p-2 mx-auto rounded-xl shadow-md border border-amber-300 flex items-center justify-center">
+                      {/* Simulated QR Code SVG */}
+                      <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <rect x="0" y="0" width="100" height="100" fill="#ffffff" />
+                        <rect x="10" y="10" width="30" height="30" fill="#000000" />
+                        <rect x="15" y="15" width="20" height="20" fill="#ffffff" />
+                        <rect x="20" y="20" width="10" height="10" fill="#000000" />
+                        <rect x="60" y="10" width="30" height="30" fill="#000000" />
+                        <rect x="65" y="15" width="20" height="20" fill="#ffffff" />
+                        <rect x="70" y="20" width="10" height="10" fill="#000000" />
+                        <rect x="10" y="60" width="30" height="30" fill="#000000" />
+                        <rect x="15" y="65" width="20" height="20" fill="#ffffff" />
+                        <rect x="20" y="70" width="10" height="10" fill="#000000" />
+                        <rect x="45" y="45" width="15" height="15" fill="#dc2626" />
+                        <rect x="60" y="60" width="25" height="25" fill="#000000" />
+                      </svg>
+                    </div>
+                    <p className="text-[11px] text-gray-600">Razorpay / UPI Payment Gateway Simulation Mode Enabled</p>
+                  </div>
+                )}
+
+                {/* Card Payment Inputs */}
+                {paymentMethod === 'card' && (
+                  <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                    <input 
+                      type="text"
+                      placeholder="Card Number (4532 •••• •••• 8890)"
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm"
+                      value={cardData.number}
+                      onChange={e => setCardData({...cardData, number: e.target.value})}
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <input 
+                        type="text"
+                        placeholder="MM/YY"
+                        className="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm"
+                        value={cardData.expiry}
+                        onChange={e => setCardData({...cardData, expiry: e.target.value})}
+                      />
+                      <input 
+                        type="password"
+                        placeholder="CVV"
+                        className="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm"
+                        value={cardData.cvv}
+                        onChange={e => setCardData({...cardData, cvv: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Grand Total Bar */}
+              <div className="bg-red-50 p-4 rounded-2xl border border-red-100 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-red-700 uppercase">Total Payable Amount</p>
+                  <p className="font-brand font-black text-2xl text-red-600">₹{grandTotal}</p>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isProcessing}
+                  className="bg-red-600 hover:bg-red-700 text-white font-black text-lg px-8 py-3.5 rounded-2xl shadow-xl shadow-red-600/30 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+                >
+                  {isProcessing ? 'Processing Order...' : 'CONFIRM & PLACE ORDER'}
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      );
+    }
+
+    // PRICE ADMIN CONFIGURATION MODAL (Edit Veg Mayonnaise & Items)
+    function PriceAdminModal({ menuItems, onClose, onUpdatePrice }) {
+      const [editingPrices, setEditingPrices] = useState({});
+
+      const handleSave = (itemId) => {
+        const newPrice = editingPrices[itemId];
+        if (newPrice !== undefined && newPrice !== '') {
+          onUpdatePrice(itemId, newPrice);
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
+            
+            <div className="bg-gray-900 text-white p-6 flex items-center justify-between">
+              <div>
+                <h3 className="font-brand font-black text-xl uppercase text-amber-400">⚙️ ADMIN MENU PRICE MANAGER</h3>
+                <p className="text-xs text-gray-300">Easily update prices for Veg Mayonnaise & items in real-time</p>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-gray-800 text-gray-300 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 max-h-96 overflow-y-auto space-y-4">
+              {menuItems.map(item => (
+                <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover" />
+                    <div>
+                      <h5 className="font-bold text-gray-900 text-sm">{item.name}</h5>
+                      <span className="text-xs text-gray-500 font-semibold">Current: ₹{item.price}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-gray-700">₹</span>
+                    <input 
+                      type="number"
+                      placeholder={item.price}
+                      defaultValue={item.price}
+                      onChange={e => setEditingPrices({...editingPrices, [item.id]: e.target.value})}
+                      className="w-20 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-bold focus:ring-2 focus:ring-red-600 focus:outline-none"
+                    />
+                    <button
+                      onClick={() => handleSave(item.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
+              <button
+                onClick={onClose}
+                className="bg-gray-900 text-white font-bold px-6 py-2 rounded-xl text-sm"
+              >
+                Close Manager
+              </button>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
